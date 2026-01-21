@@ -1,37 +1,62 @@
 package org.joseluis;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Sudoku {
 
     Sudoku(){
-        Interfaz interfaz = new Interfaz(generarSudokuAleatorio());
+        Interfaz interfaz = new Interfaz();
     }
 
     // Genera la plantilla vacia de un sudoku, y se intenta resolver con numeros aleatorios
-    private int[][] generarSudokuAleatorio(){
+    static int[][] generarSudokuAleatorio(String dificultad){
         int[][] sudokuAleatorio = new int[9][9];
         for (int[] ints : sudokuAleatorio) {
             Arrays.fill(ints, 0);
         }
-        // Se intenta resolver el sudoku de forma aleatoria y si tarda demasiado se vuelve a intentar
-        if (!Resolver.resolverSudoku(sudokuAleatorio, true)) {
-            System.out.println("No consiguio generar sudoku, intentando nuevamente");
-            generarSudokuAleatorio();
-        }else{
-            // Si se genera el sudoku correctamente se devuelve el sudoku completo
-            System.out.println("Sudoku generado:"+ Arrays.deepToString(sudokuAleatorio));
-        }
-        return ocultarCeldas(sudokuAleatorio);
+
+        // Primero genera de forma aleatoria las "cajas" 1, 5 y 9
+        generarSudokuBase(sudokuAleatorio);
+
+        // Despues resuelve el sudoku
+        Resolver.resolverSudoku(sudokuAleatorio);
+
+        System.out.println("Sudoku generado:"+ Arrays.deepToString(sudokuAleatorio));
+
+        return ocultarCeldas(sudokuAleatorio, dificultad);
     }
 
-    // Oculta de forma aleatoria 21 celdas del sudoku
-    private int[][] ocultarCeldas(int[][] sudoku){
-        for (int i = 0; i < 21; i++) {
+    // Genera de forma aleatoria las "cajas" 1, 5 y 9 que no estan relacionadas ni horizontal ni verticalmente
+    private static void generarSudokuBase(int[][] sudokuAleatorio){
+        Random random = new Random();
+        for (int caja = 0; caja < 9; caja+=3) {
+            for (int f = caja; f < caja+3; f++) {
+                for (int c = caja; c < caja+3; c++) {
+                    int n = (int)(Math.random() * 9) + 1;
+                    if(!Comprobar.comprobarCaja(sudokuAleatorio, f, c, n)){
+                        sudokuAleatorio[f][c] = n;
+                    }else {
+                        c--;
+                    }
+                }
+            }
+        }
+    }
+
+    // Oculta de forma aleatoria celdas dependiendo de la dificultad seleccionada
+    private static int[][] ocultarCeldas(int[][] sudoku, String dificultad){
+        int numOcultadas;
+        switch (dificultad){
+            case "facil": numOcultadas = 21;
+                break;
+            case "normal": numOcultadas = 35;
+                break;
+            case "dificil": numOcultadas = 50;
+                break;
+            default: numOcultadas = 0;
+        }
+        for (int i = 0; i < numOcultadas; i++) {
             int fila = (int)(Math.random() * 9) ;
             int columna = (int)(Math.random() * 9) ;
             if(sudoku[fila][columna] != 0){

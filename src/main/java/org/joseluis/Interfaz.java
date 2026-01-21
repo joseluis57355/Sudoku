@@ -30,7 +30,7 @@ public class Interfaz {
     JButton numeroSeleccionado = null;
 
     // Genera la interfaz a partir de una plantilla de sudoku generada
-    Interfaz(int[][] sudokuMatriz) {
+    Interfaz() {
         frame.setSize(Ancho, Alto);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,7 +43,45 @@ public class Interfaz {
 
         textPanel.add(textLabel);
         frame.add(textPanel, BorderLayout.NORTH);
+        tableroPanel.setLayout(new GridLayout(1, 3));
 
+        JButton botonFacil = new  JButton("Facil");
+        JButton botonNormal = new  JButton("Normal");
+        JButton botonDificil = new  JButton("Dificil");
+
+        //TODO refinar botones
+        botonFacil.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                empezarPartida("facil");
+            }
+        });
+
+        botonNormal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                empezarPartida("normal");
+            }
+        });
+
+        botonDificil.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                empezarPartida("dificil");
+            }
+        });
+
+        tableroPanel.add(botonFacil);
+        tableroPanel.add(botonNormal);
+        tableroPanel.add(botonDificil);
+        frame.add(tableroPanel, BorderLayout.CENTER);
+        frame.setVisible(true);
+
+    }
+
+    void empezarPartida(String dificultad) {
+        int[][] sudokuMatriz = Sudoku.generarSudokuAleatorio(dificultad);
+        tableroPanel.removeAll();
         tableroPanel.setLayout(new GridLayout(9, 9));
         generarCasillas(sudokuMatriz);
         frame.add(tableroPanel, BorderLayout.CENTER);

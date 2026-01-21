@@ -30,7 +30,7 @@ public class Comprobar {
     }
 
     // Devuelve true si el numero se repite en la caja
-    private static boolean comprobarCaja(int[][] sudoku, int fila, int columna, int numero){
+    public static boolean comprobarCaja(int[][] sudoku, int fila, int columna, int numero){
         int filaCaja = fila - fila % 3;
         int columnaCaja = columna - columna % 3;
 
